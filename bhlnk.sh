@@ -32,6 +32,9 @@ echo "Enter your password to use Sudo ...."
 sudo su
 for ((i = 0 ; i < 4 ; i++)); do
 	mkdir temp/"${part[$i]}" 
-	mount "${part[$i]}.img" 
+	mount "${part[$i]}.img" temp/"${part[$i]}" 
 done
 
+cd temp
+
+echo "Modifing ...."
