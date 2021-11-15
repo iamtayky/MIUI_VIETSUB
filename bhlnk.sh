@@ -63,7 +63,7 @@ echo ""
 cd ..
 sleep 1
 for ((i = 0 ; i < 4 ; i++)); do
-	resize2fs -f -M ${part[$i]}.img"
+	resize2fs -f -M "${part[$i]}.img"
 	echo "Shrink "${part[$i]}" :  done"
 done
 
