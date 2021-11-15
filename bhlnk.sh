@@ -40,6 +40,31 @@ echo "#############################"
 echo ""
 echo "Debloating ...."
 list=`cat debloat.txt`
+cd temp/system
   for app in $list; do
-        sudo rm-r "temp/$app"
+        sudo rm -r "$app"
+        echo "done"
   done
+echo "#############################"
+echo "#        Unmounting ....    #"
+echo "#############################"
+echo ""
+cd ..
+sleep 3
+for ((i = 0 ; i < 4 ; i++)); do
+	sudo umount "${part[$i]}"
+	echo "Umount "${part[$i]}" :  done"
+	sleep 3
+done
+echo "#############################"
+echo "#        Shrinking ....     #"
+echo "#############################"
+echo ""
+cd ..
+sleep 1
+for ((i = 0 ; i < 4 ; i++)); do
+	resize2fs -f -M ${part[$i]}.img"
+	echo "Shrink "${part[$i]}" :  done"
+done
+
+
