@@ -1,12 +1,18 @@
 part=(system product system_ext vendor)
 mkdir temp
 
+super()
+{
 echo "Convert sparse images to raw images ...."
 echo ""
-./bin/simg2img super.img raw.img
+./bin/simg2img stock/super.img temp/raw.img
 echo "Unpack super parttion ...."
 echo ""
-./bin/lpunpack raw.img
+./bin/lpunpack temp/raw.img
+}
+######################
+mkrw()
+{
 echo "Get Parttion size ...."
 echo ""
 part_size[0]=$(find "system.img" -printf "%s")
@@ -27,6 +33,10 @@ for ((i = 0 ; i < 4 ; i++)); do
 	e2fsck -E unshare_blocks "${part[$i]}.img"
 	echo ""${part[$i]}.img" : done"
 done
+}
+##########
+mount()
+{
 clear
 echo "Start mountting ...."
 echo "Enter your password to use Sudo ...."
@@ -34,8 +44,12 @@ for ((i = 0 ; i < 4 ; i++)); do
 	mkdir temp/"${part[$i]}" 
 	sudo mount "${part[$i]}.img" temp/"${part[$i]}" 
 done
+}
+########
+debloat()
+{
 echo "#############################"
-echo "#     Start Modifing ....   #"
+echo "#       Debloating ....     #"
 echo "#############################"
 echo ""
 echo "Debloating ...."
@@ -45,6 +59,10 @@ cd temp/system
         sudo rm -r "$app"
         echo "done"
   done
+}
+#########
+umount()
+{
 echo "#############################"
 echo "#        Unmounting ....    #"
 echo "#############################"
@@ -56,6 +74,10 @@ for ((i = 0 ; i < 4 ; i++)); do
 	echo "Umount "${part[$i]}" :  done"
 	sleep 3
 done
+}
+##########
+shrink () 
+{
 echo "#############################"
 echo "#        Shrinking ....     #"
 echo "#############################"
@@ -66,5 +88,7 @@ for ((i = 0 ; i < 4 ; i++)); do
 	resize2fs -f -M "${part[$i]}.img"
 	echo "Shrink "${part[$i]}" :  done"
 done
+}
+
 
 
