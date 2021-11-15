@@ -16,9 +16,10 @@ part_size[3]=$(find "vendor.img" -printf "%s")
 echo "Resize Parttion ...."
 for ((i = 0 ; i < 4 ; i++)); do
 	size=$(echo "${part_size[$i]} + 50000000" | bc)
+	size1=$(echo "$size / 1024" | bc)
 	echo "new "${part[$i]}.img" is : $size"
 	e2fsck -f "${part[$i]}.img"
-	esize2fs "${part[$i]}.img" $size
+	resize2fs "${part[$i]}.img" $size1
 done
 echo ""
 echo "Start remove Read-Only ...."
@@ -29,12 +30,16 @@ done
 clear
 echo "Start mountting ...."
 echo "Enter your password to use Sudo ...."
-sudo su
 for ((i = 0 ; i < 4 ; i++)); do
 	mkdir temp/"${part[$i]}" 
-	mount "${part[$i]}.img" temp/"${part[$i]}" 
+	sudo mount "${part[$i]}.img" temp/"${part[$i]}" 
 done
-
-cd temp
-
-echo "Modifing ...."
+echo "#############################"
+echo "#     Start Modifing ....   #"
+echo "#############################"
+echo ""
+echo "Debloating ...."
+list=`cat debloat.txt`
+  for app in $list; do
+        sudo rm-r "temp/$app"
+  done
