@@ -1,18 +1,36 @@
 part=(system product system_ext vendor)
-mkdir temp
-
 super()
 {
+echo "#############################"
+echo "#     Unpack Super.img .... #"
+echo "#############################"
+echo ""
 echo "Convert sparse images to raw images ...."
 echo ""
-./bin/simg2img stock/super.img temp/raw.img
+./bin/simg2img super.img raw.img
 echo "Unpack super parttion ...."
 echo ""
-./bin/lpunpack temp/raw.img
+./bin/lpunpack raw.img
+}
+zipfile()
+{
+
+	mkdir zip_temp
+	mkdir temp
+	unzip stock/ziprom.zip -d zip_temp
+	for ((i = 0 ; i < 4 ; i++)); do
+		./bin/brotli --decompress zip_temp/"${part[$i]}.new.dat.br" -o zip_temp/"${part[$i]}.new.dat"
+		./bin/sdat2img.py zip_temp/"${part[$i]}.transfer.list" zip_temp/"${part[$i]}.new.dat" "${part[$i]}.img"
+		echo "extract "${part[$i]}.img" : done"
+	done
 }
 ######################
 mkrw()
 {
+echo "#############################"
+echo "#       READ-WRITE ....     #"
+echo "#############################"
+echo ""
 echo "Get Parttion size ...."
 echo ""
 part_size[0]=$(find "system.img" -printf "%s")
@@ -61,6 +79,7 @@ cd temp/system
   done
 }
 #########
+#########
 umount()
 {
 echo "#############################"
@@ -88,7 +107,47 @@ for ((i = 0 ; i < 4 ; i++)); do
 	resize2fs -f -M "${part[$i]}.img"
 	echo "Shrink "${part[$i]}" :  done"
 done
+echo "#############################"
+echo "#          DONE ....        #"
+echo "#############################"
+echo ""
+}
+cleanup()
+{
+	if [[ -d "temp" ]]; then
+		rm -r temp
+		rm -r zip_temp
+		rm system.img
+		rm product.img
+		rm system_ext.img 
+		rm vendor.img
+		rm odm.img
+	fi
 }
 
+cleanup
+echo "#############################"
+echo "#         STARTING ....     #"
+echo "#############################"
+echo ""
+#cd stock
+#if [[ -f "ziprom.zip" ]]; then
+	#cd ..
+	#echo "Zip rom detect"
+	#zipfile
+#elif [[ -f "super.img" ]]; then
+	#cd ..
+	#echo "Super.img detect"
+#else wget -O ziprom.zip $1 && cd .. && zipfile
+#fi
+#mkrw
+#mount
+#debloat
+#umount
+#shrink
 
-
+if [ -f "s_system.img" ]; then
+		echo "- Repack vendor.img "
+		./bin/img2sdat.py s_sytem.img -o $(pwd) -v 4 -p system
+else echo "bug"
+fi

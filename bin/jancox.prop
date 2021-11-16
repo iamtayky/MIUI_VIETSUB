@@ -1,0 +1,4 @@
+brotli.level=1
+archive.zip=enable
+clean.tmp=disable
+date.file.rom=2009-09-27
