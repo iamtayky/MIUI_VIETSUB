@@ -172,22 +172,10 @@ for ((i = 0 ; i < 4 ; i++)); do
 	./bin/img2simg "${part[$i]}.img" "s_${part[$i]}.img"
 done
 echo "Compress to new.dat .... "
- 	echo "- Repack syste.img "
- 	python3 ./bin/linux/img2sdat.py "s_system.img" -o $bro -v 4 
- 	echo ""
- 	echo "DONE"
- 	echo "- Repack product.img "
- 	python3 ./bin/linux/img2sdat.py "s_product.img" -o $bro -v 4 
- 	echo ""
- 	echo "DONE"
-  	echo "- Repack system_ext.img "
- 	python3 ./bin/linux/img2sdat.py "s_system_ext.img" -o $bro -v 4 
- 	echo ""
- 	echo "DONE"
-  	echo "- Repack vendor.img "
- 	python3 ./bin/linux/img2sdat.py "s_vendor.img" -o $bro -v 4 
- 	echo ""
- 	echo "DONE"
+for ((i = 0 ; i < 4 ; i++)); do
+	echo "- Repack ${part[$i]}.img"
+ 	python3 ./bin/linux/img2sdat.py "s_${part[$i]}.img" -o $bro -v 4 -p "${part[$i]}"
+done
 
 #level brotli
 echo "Compress to brotli .... "
@@ -203,7 +191,7 @@ done
 if [ -d $bro/META-INF ]; then
 	echo "- Zipping"
 	[ -f ./new_rom.zip ] && rm -rf ./new_rom.zip
-	$bin/7za a -tzip "$dir/new_rom.zip" $bro/*  
+	zip "$dir/new_rom.zip" $bro/*  
 fi
 
 
@@ -231,7 +219,7 @@ mount
 printf "Do you want remove most unuse app ...\n"
 printf "press y to debloat or n to skip\n"
 read x
-if [[ $x == "Y" ]]; then
+if [[ $x == "y" ]]; then
 	debloat
 fi
 vietsub
