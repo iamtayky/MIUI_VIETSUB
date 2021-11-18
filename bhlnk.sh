@@ -145,13 +145,13 @@ echo "#  remove source file ....   #"
 echo "#############################"
 echo ""
 cd $dir/zip_temp
+rm firmware-update/vbmeta.img
 	for ((i = 0 ; i < 4 ; i++)); do
 		if [[ -f "${part[$i]}.new.dat.br" ]]; then
 			rm "${part[$i]}.new.dat.br"
 			rm "${part[$i]}.new.dat"
 			rm "${part[$i]}.patch.dat" 
 			rm "${part[$i]}.transfer.list"
-			rm firmware-update/vbmeta.img
 		fi
 	done
 cd ..
