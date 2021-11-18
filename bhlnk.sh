@@ -89,7 +89,7 @@ echo "#       Debloating ....     #"
 echo "#############################"
 echo ""
 echo "Debloating ...."
-list=`cat debloat.txt`
+list=`cat $dir/bin/debloat.txt`
 cd $dir/temp/system
   for app in $list; do
         sudo rm -r "$app"
@@ -165,7 +165,7 @@ echo ""
 	echo "copy bhlnk's overlay and stuff"
 	sudo cp -a vietsub/. $dir/temp/
 	echo "give permisstion ...."
-	per=$(cat permiss.txt)
+	per=$(cat $dir/bin/permiss.txt)
 	for p in $per; do
 		if [[ -d "$dir/temp/$p" ]]; then
 			sudo chmod 755 $dir/temp/$p
@@ -238,6 +238,7 @@ printf "press y to debloat or n to skip\n"
 	#debloat
 #fi
 #vietsub
+debloat
 umount
 shrink
 read -p "Press any key to resume ..."
