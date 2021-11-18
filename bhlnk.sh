@@ -191,7 +191,9 @@ done
 if [ -d $bro/META-INF ]; then
 	echo "- Zipping"
 	[ -f ./new_rom.zip ] && rm -rf ./new_rom.zip
-	zip "$dir/new_rom.zip" $bro/*  
+	for dir in "$bro"; do
+    ( cd "$dir" && zip -r ../"MIUI"_"VIETSUB".zip . )
+    done 
 fi
 
 
@@ -206,6 +208,7 @@ echo "#############################"
 echo "#         STARTING ....     #"
 echo "#############################"
 echo ""
+read -p "Press [Enter] key to start modify..."
 if [[ -f "ziprom.zip" ]]; then
 	echo "Zip rom detect"
 	zipfile
@@ -218,13 +221,14 @@ mount
 ###############
 printf "Do you want remove most unuse app ...\n"
 printf "press y to debloat or n to skip\n"
-read x
-if [[ $x == "y" ]]; then
-	debloat
-fi
-vietsub
+#read x
+#if [[ $x == "y" ]]; then
+	#debloat
+#fi
+#vietsub
 umount
 shrink
+read -p "Press any key to resume ..."
 remove_source
 echo "#############################"
 echo "#         Compress          #"
