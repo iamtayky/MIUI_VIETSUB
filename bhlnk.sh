@@ -3,6 +3,13 @@ part=(system product system_ext vendor)
 dir=$(pwd)
 bin="$dir/bin/linux"
 bro="$dir/zip_temp"
+getszie()
+{
+	part_size[0]=$(find "system.img" -printf "%s")
+	part_size[1]=$(find "product.img" -printf "%s")
+	part_size[2]=$(find "system_ext.img" -printf "%s")
+	part_size[3]=$(find "vendor.img" -printf "%s")
+}
 super()
 {
 echo "#############################"
@@ -18,7 +25,9 @@ echo ""
 }
 zipfile()
 {
-
+echo "#############################"
+echo "#     Unpack Zip rom .... #"
+echo "#############################"
 	mkdir zip_temp
 	mkdir temp
 	unzip -t ziprom.zip
@@ -27,6 +36,10 @@ zipfile()
 		./bin/brotli --decompress zip_temp/"${part[$i]}.new.dat.br" -o zip_temp/"${part[$i]}.new.dat"
 		./bin/sdat2img.py zip_temp/"${part[$i]}.transfer.list" zip_temp/"${part[$i]}.new.dat" "${part[$i]}.img"
 		echo "extract "${part[$i]}.img" : done"
+	done
+	getszie
+	for ((i = 0 ; i < 4 ; i++)); do
+	sed -i "s/${part_size[$i]}/"${part[$i]}_size"/g" "$bro/dynamic_partitions_op_list"
 	done
 }
 ######################
@@ -38,10 +51,7 @@ echo "#############################"
 echo ""
 echo "Get Parttion size ...."
 echo ""
-part_size[0]=$(find "system.img" -printf "%s")
-part_size[1]=$(find "product.img" -printf "%s")
-part_size[2]=$(find "system_ext.img" -printf "%s")
-part_size[3]=$(find "vendor.img" -printf "%s")
+getszie
 echo "Resize Parttion ...."
 for ((i = 0 ; i < 4 ; i++)); do
 	size=$(echo "${part_size[$i]} + 50000000" | bc)
@@ -115,6 +125,10 @@ for ((i = 0 ; i < 4 ; i++)); do
 	resize2fs -f -M "${part[$i]}.img"
 	echo "Shrink "${part[$i]}" :  done"
 done
+getszie
+	for ((i = 0 ; i < 4 ; i++)); do
+	sed -i "s/"${part[$i]}_size"/"${part_size[$i]}"/g" "$bro/dynamic_partitions_op_list"
+	done
 }
 cleanup()
 {
@@ -191,9 +205,7 @@ done
 if [ -d $bro/META-INF ]; then
 	echo "- Zipping"
 	[ -f ./new_rom.zip ] && rm -rf ./new_rom.zip
-	for dir in "$bro"; do
-    ( cd "$dir" && zip -r ../"MIUI"_"VIETSUB".zip . )
-    done 
+	$bin/7za a -tzip "$dir/MIUI_VIETSUB.zip" $bro/*  
 fi
 
 

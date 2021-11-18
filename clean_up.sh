@@ -1,8 +1,4 @@
 #!/bin/bash
-read -p "Press [Enter] key to start backup..."
-read -p "Press any key to resume ..."
-## Bash add pause prompt for 5 seconds ##
-read -t 5 -p "I am going to wait for 5 seconds only ..."
 part=(system product system_ext vendor)
 dir=$(pwd)
 cd $dir
@@ -10,3 +6,9 @@ cd $dir
 		rm -r temp
 		rm -r zip_temp
 	fi
+for ((i = 0 ; i < 4 ; i++)); do
+	if [[ -f "${part[$i]}.img" ]]; then
+	rm -rf ${part[$i]}.img
+	echo "dome"
+	fi
+done
