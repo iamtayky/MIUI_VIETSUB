@@ -166,13 +166,8 @@ echo ""
 	echo "copy bhlnk's overlay and stuff"
 	sudo cp -a vietsub/. $dir/temp/
 	echo "give permisstion ...."
-	per=$(cat $dir/bin/permiss.txt)
-	for p in $per; do
-		if [[ -d "$dir/temp/$p" ]]; then
-			sudo chmod 755 $dir/temp/$p
-		else sudo chmod 644 $dir/temp/$p
-		fi
-	done
+		find $dir/temp/product/overlay -type f -exec chmod 644 {} \;
+		find $dir/system/system/media/theme/default -type f -exec chmod 644 {} \;
 	echo "done"
 }
 repackz()
