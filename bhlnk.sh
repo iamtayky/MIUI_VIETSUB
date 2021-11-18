@@ -90,7 +90,7 @@ echo "#############################"
 echo ""
 echo "Debloating ...."
 list=`cat $dir/bin/debloat.txt`
-cd $dir/temp/system
+cd $dir/temp
   for app in $list; do
         sudo rm -r "$app"
         echo "done"
