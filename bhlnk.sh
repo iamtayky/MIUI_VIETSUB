@@ -63,7 +63,7 @@ done
 echo ""
 echo "Start remove Read-Only ...."
 for ((i = 0 ; i < 4 ; i++)); do
-	e2fsck -E unshare_blocks "${part[$i]}.img"
+	e2fsck -y -E unshare_blocks "${part[$i]}.img"
 	echo ""${part[$i]}.img" : done"
 done
 }
@@ -151,6 +151,7 @@ cd $dir/zip_temp
 			rm "${part[$i]}.new.dat"
 			rm "${part[$i]}.patch.dat" 
 			rm "${part[$i]}.transfer.list"
+			rm firmware-update/vbmeta.img
 		fi
 	done
 cd ..
@@ -204,12 +205,13 @@ done
 
 if [ -d $bro/META-INF ]; then
 	echo "- Zipping"
-	[ -f ./new_rom.zip ] && rm -rf ./new_rom.zip
+	cp "$dir/bin/vbmeta.img" $bro
+	[ -f ./MIUI_VIETSUB.zip ] && rm -rf ./MIUI_VIETSUB.zip
 	$bin/7za a -tzip "$dir/MIUI_VIETSUB.zip" $bro/*  
 fi
 
 
-if [ -f "$dir/new_rom.zip" ]; then
+if [ -f "$dir/MIUI_VIETSUB.zip" ]; then
       echo "- Repack done"
 else
       echo "- Repack error"
@@ -238,7 +240,7 @@ printf "press y to debloat or n to skip\n"
 	#debloat
 #fi
 #vietsub
-debloat
+#debloat
 umount
 shrink
 read -p "Press any key to resume ..."
