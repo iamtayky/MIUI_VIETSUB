@@ -3,6 +3,15 @@ part=(system product system_ext vendor)
 dir=$(pwd)
 bin="$dir/bin/linux"
 bro="$dir/zip_temp"
+chmod -R 777 $bin
+chmod -R 777 $dir/bin
+if [ -f input.zip ]; then
+     input=input.zip
+elif [ -f rom.zip ]; then
+     input=rom.zip
+else
+    input="$(zenity --title "Pick your ROM" --file-selection 2>/dev/null)"
+fi
 getszie()
 {
 	part_size[0]=$(find "system.img" -printf "%s")
@@ -30,8 +39,8 @@ echo "#     Unpack Zip rom .... #"
 echo "#############################"
 	mkdir zip_temp
 	mkdir temp
-	unzip -t ziprom.zip
-	unzip ziprom.zip -d zip_temp
+	unzip -t $input
+	unzip $input -d zip_temp
 	for ((i = 0 ; i < 4 ; i++)); do
 		./bin/brotli --decompress zip_temp/"${part[$i]}.new.dat.br" -o zip_temp/"${part[$i]}.new.dat"
 		./bin/sdat2img.py zip_temp/"${part[$i]}.transfer.list" zip_temp/"${part[$i]}.new.dat" "${part[$i]}.img"
@@ -164,10 +173,11 @@ echo "#############################"
 echo ""
 	cd $dir
 	echo "copy bhlnk's overlay and stuff"
-	sudo cp -a vietsub/. $dir/temp/
+	sudo cp -arf vietsub/. $dir/temp/
 	echo "give permisstion ...."
-		find $dir/temp/product/overlay -type f -exec chmod 644 {} \;
-		find $dir/system/system/media/theme/default -type f -exec chmod 644 {} \;
+		sudo find $dir/temp/vendor/overlay -type f -exec chmod 644 {} \;
+		sudo find $dir/temp/system/system/media/theme/default -type f -exec chmod 644 {} \;
+		sudo find $dir/temp/system/system/app/miui -type f -exec chmod 644 {} \;
 	echo "done"
 }
 repackz()
@@ -218,12 +228,12 @@ echo "#         STARTING ....     #"
 echo "#############################"
 echo ""
 read -p "Press [Enter] key to start modify..."
-if [[ -f "ziprom.zip" ]]; then
+if [[ -f "$input" ]]; then
 	echo "Zip rom detect"
 	zipfile
 elif [[ -f "super.img" ]]; then
 	echo "Super.img detect"
-else wget -O ziprom.zip $1 && cd .. && zipfile
+else exit 0
 fi
 mkrw
 mount
@@ -234,11 +244,11 @@ printf "press y to debloat or n to skip\n"
 #if [[ $x == "y" ]]; then
 	#debloat
 #fi
-#vietsub
+vietsub
 #debloat
+read -p "Press any key to resume ..."
 umount
 shrink
-read -p "Press any key to resume ..."
 remove_source
 echo "#############################"
 echo "#         Compress          #"
