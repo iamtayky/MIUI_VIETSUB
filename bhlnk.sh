@@ -176,8 +176,8 @@ echo ""
 	sudo cp -arf vietsub/. $dir/temp/
 	echo "give permisstion ...."
 		sudo find $dir/temp/vendor/overlay -type f -exec chmod 644 {} \;
-		sudo find $dir/temp/system/system/media/theme/default -type f -exec chmod 644 {} \;
 		sudo find $dir/temp/system/system/app/miui -type f -exec chmod 644 {} \;
+		sudo find $dir/temp/system/system/fonts -type f -exec chmod 644 {} \;
 	echo "done"
 }
 repackz()
