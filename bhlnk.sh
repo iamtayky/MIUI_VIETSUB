@@ -196,7 +196,7 @@ echo "Compress to brotli .... "
 #
 for ((i = 0 ; i < 4 ; i++)); do
    	echo "- Repack ${part[$i]}.new.dat"
-	$bin/brotli -1 -j -w 24 "$bro/${part[$i]}.new.dat" -o "$bro/${part[$i]}.new.dat.br"
+	$bin/brotli -6 -j -w 24 "$bro/${part[$i]}.new.dat" -o "$bro/${part[$i]}.new.dat.br"
 	rm -rf "${part[$i]}.img"
 	rm -rf "s_${part[$i]}.img"
 	rm -rf "$bro/${part[$i]}.new.dat"
