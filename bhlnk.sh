@@ -120,6 +120,7 @@ for ((i = 0 ; i < 4 ; i++)); do
 	echo "Umount "${part[$i]}" :  done"
 	sleep 3
 done
+sudo umount vietsub_f
 }
 ##########
 shrink () 
@@ -173,11 +174,9 @@ echo "#############################"
 echo ""
 	cd $dir
 	echo "copy bhlnk's overlay and stuff"
-	sudo cp -arf vietsub/. $dir/temp/
-	echo "give permisstion ...."
-		sudo find $dir/temp/vendor/overlay -type f -exec chmod 644 {} \;
-		sudo find $dir/temp/system/system/app/miui -type f -exec chmod 644 {} \;
-		sudo find $dir/temp/system/system/fonts -type f -exec chmod 644 {} \;
+	mkdir vietsub_f
+	sudo mount vietsub.img vietsub_f
+	sudo cp -arf vietsub_f/overlay/. $dir/temp/vendor/overlay
 	echo "done"
 }
 repackz()
@@ -239,7 +238,7 @@ mkrw
 mount
 ###############
 printf "Do you want remove most unuse app ...\n"
-printf "press y to debloat or n to skip\n"
+#printf "press y to debloat or n to skip\n"
 #read x
 #if [[ $x == "y" ]]; then
 	#debloat
@@ -250,8 +249,4 @@ read -p "Press any key to resume ..."
 umount
 shrink
 remove_source
-echo "#############################"
-echo "#         Compress          #"
-echo "#############################"
-echo ""
 repackz
