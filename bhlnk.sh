@@ -15,22 +15,7 @@ fi
 getszie()
 {
 	part_size[0]=$(find "system.img" -printf "%s")
-	part_size[2]=$(find "product.img" -printf "%s")
-	part_size[3]=$(find "system_ext.img" -printf "%s")
 	part_size[1]=$(find "vendor.img" -printf "%s")
-}
-super()
-{
-echo "#############################"
-echo "#     Unpack Super.img .... #"
-echo "#############################"
-echo ""
-echo "Convert sparse images to raw images ...."
-echo ""
-./bin/simg2img super.img raw.img
-echo "Unpack super parttion ...."
-echo ""
-./bin/lpunpack raw.img
 }
 zipfile()
 {
