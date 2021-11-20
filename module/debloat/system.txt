@@ -35,3 +35,5 @@ app/VoiceTrigger
 priv-app/MIUIBrowser
 priv-app/MIUIQuickSearchBox
 priv-app/MIUIYellowPage
+priv-app/MIService
+bin/logd
