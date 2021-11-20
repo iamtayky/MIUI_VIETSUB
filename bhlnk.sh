@@ -201,7 +201,7 @@ echo "#############################"
 echo ""
 echo "Compress to sparse img .... "
 for ((i = 0 ; i < 2 ; i++)); do
-	./bin/img2simg "${part[$i]}.img" "s_${part[$i]}.img" 2>/dev/null
+	./bin/img2simg "${part[$i]}.img" "s_${part[$i]}.img" 
 done
 echo "Compress to new.dat .... "
 for ((i = 0 ; i < 2 ; i++)); do
