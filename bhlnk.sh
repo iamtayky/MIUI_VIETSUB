@@ -93,15 +93,25 @@ done
 ########
 debloat()
 {
+cd $dir
 echo "#############################"
 echo "#       Debloating ....     #"
 echo "#############################"
 echo ""
 echo "Debloating ...."
-list=`cat $dir/bin/debloat.txt`
-cd $dir/temp
-  for app in $list; do
-        sudo rm -r "$app"
+###########
+sys=`cat $dir/module/debloat/system.txt`
+ven=`cat $dir/module/debloat/vendor.txt`
+echo "In System : "
+cd $dir/temp/system/system
+  for app in $sys; do
+        sudo rm -rf "$app" 2>/dev/null
+        echo "done"
+  done
+echo "In Vendor : "
+cd $dir/temp/vendor
+  for app in $ven; do
+        sudo rm -rf "$app" 2>/dev/null
         echo "done"
   done
 }
@@ -120,6 +130,7 @@ for ((i = 0 ; i < 2 ; i++)); do
 	echo "Umount "${part[$i]}" :  done"
 	sleep 3
 done
+cd $dir
 	sudo umount $dir/modulevietsub_f
 	sudo umount $dir/modulefonts_f
 }
@@ -177,14 +188,20 @@ echo ""
 	echo "copy bhlnk's overlay and stuff"
 	mkdir vietsub_f
 	mkdir fonts_f
+	mkdir theme_f
 	sudo mount vietsub.img vietsub_f
 	sudo mount fonts.img fonts_f
+	sudo mount crack_theme.img theme_f
+	echo "Adding Vietnamese Language"
 	sudo cp -arf vietsub_f/overlay/. $dir/temp/vendor/overlay
-	sudo cp -arf fonts_f/system/fonts/. $dir/temp/system/system/fonts
 	sudo cp -rf "miui.apk" $dir/temp/system/system/app/miui
 	sudo chmod 644 "$dir/temp/system/system/app/miui/miui.apk"
 	sudo chown root "$dir/temp/system/system/app/miui/miui.apk"
 	sudo chgrp root "$dir/temp/system/system/app/miui/miui.apk"
+	echo "Adding Roboto Fonts"
+	sudo cp -arf fonts_f/system/fonts/. $dir/temp/system/system/fonts
+	echo "Adding Crack Theme from https://yukongya.herokuapp.com"
+	sudo cp -arf theme_f/system/app/MIUIThemeManager/. $dir/temp/system/system/app/MIUIThemeManager
 	echo "done"
 	cd $dir
 
@@ -247,13 +264,9 @@ else exit 0
 fi
 mkrw
 mount
+read -p "Press any key to umount and repack ..."
 ###############
-printf "Do you want remove most unuse app ...\n"
-printf "press y to debloat or n to skip\n"
-#read x
-#if [[ $x == "y" ]]; then
-	#debloat
-#fi
+debloat
 vietsub
 read -p "Press any key to umount and repack ..."
 umount
