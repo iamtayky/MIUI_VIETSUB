@@ -35,6 +35,7 @@ echo "#############################"
 	for ((i = 0 ; i < 2 ; i++)); do
 	sed -i "s/${part_size[$i]}/"${part[$i]}_size"/g" "$bro/dynamic_partitions_op_list"
 	done
+rm $input
 }
 ######################
 mkrw()
@@ -202,11 +203,13 @@ echo ""
 echo "Compress to sparse img .... "
 for ((i = 0 ; i < 2 ; i++)); do
 	./bin/img2simg "${part[$i]}.img" "s_${part[$i]}.img" 
+	 rm -rf "${part[$i]}.img"
 done
 echo "Compress to new.dat .... "
 for ((i = 0 ; i < 2 ; i++)); do
 	echo "- Repack ${part[$i]}.img"
  	python3 ./bin/linux/img2sdat.py "s_${part[$i]}.img" -o $bro -v 4 -p "${part[$i]}"
+	rm -rf "s_${part[$i]}.img"
 done
 
 #level brotli
@@ -215,8 +218,6 @@ echo "Compress to brotli .... "
 for ((i = 0 ; i < 2 ; i++)); do
    	echo "- Repack ${part[$i]}.new.dat"
 	$bin/brotli -6 -j -w 24 "$bro/${part[$i]}.new.dat" -o "$bro/${part[$i]}.new.dat.br"
-	rm -rf "${part[$i]}.img"
-	rm -rf "s_${part[$i]}.img"
 	rm -rf "$bro/${part[$i]}.new.dat"
 done
 
@@ -247,6 +248,7 @@ elif [[ -f "super.img" ]]; then
 	echo "Super.img detect"
 else exit 0
 fi
+remove_source
 mkrw
 mount
 read -p "Press any key to umount and repack ..."
@@ -255,5 +257,4 @@ debloat
 vietsub
 umount
 shrink
-remove_source
 repackz
