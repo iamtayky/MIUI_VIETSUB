@@ -15,8 +15,6 @@ fi
 getszie()
 {
 	part_size[0]=$(find "system.img" -printf "%s")
-	part_size[2]=$(find "product.img" -printf "%s")
-	part_size[3]=$(find "system_ext.img" -printf "%s")
 	part_size[1]=$(find "vendor.img" -printf "%s")
 }
 super()
@@ -47,9 +45,11 @@ echo "#############################"
 		echo "extract "${part[$i]}.img" : done"
 	done
 	getszie
-	for ((i = 0 ; i < 2 ; i++)); do
-	sed -i "s/${part_size[$i]}/"${part[$i]}_size"/g" "$bro/dynamic_partitions_op_list"
-	done
+	if [[ -f "$bro/dynamic_partitions_op_list" ]]; then
+		for ((i = 0 ; i < 2 ; i++)); do
+		sed -i "s/${part_size[$i]}/"${part[$i]}_size"/g" "$bro/dynamic_partitions_op_list"
+		done
+	fi
 }
 ######################
 mkrw()
@@ -145,9 +145,11 @@ for ((i = 0 ; i < 2 ; i++)); do
 	echo "Shrink "${part[$i]}" :  done"
 done
 getszie
+if [[ -f "$bro/dynamic_partitions_op_list" ]]; then
 	for ((i = 0 ; i < 2 ; i++)); do
 	sed -i "s/"${part[$i]}_size"/"${part_size[$i]}"/g" "$bro/dynamic_partitions_op_list"
 	done
+fi
 }
 cleanup()
 {
@@ -264,7 +266,6 @@ else exit 0
 fi
 mkrw
 mount
-read -p "Press any key to umount and repack ..."
 ###############
 debloat
 vietsub
