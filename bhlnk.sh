@@ -204,6 +204,10 @@ echo "Compress to sparse img .... "
 for ((i = 0 ; i < 2 ; i++)); do
 	 img2simg "${part[$i]}.img" "s_${part[$i]}.img" 
 	 rm -rf "${part[$i]}.img"
+	 if [ -f "s_${part[$i]}.img"]; then 
+	 echo " Done : "s_${part[$i]}.img""
+	 else echo "fail"
+	 fi
 done
 echo "Compress to new.dat .... "
 for ((i = 0 ; i < 2 ; i++)); do
