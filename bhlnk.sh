@@ -17,19 +17,6 @@ getszie()
 	part_size[0]=$(find "system.img" -printf "%s")
 	part_size[1]=$(find "vendor.img" -printf "%s")
 }
-super()
-{
-echo "#############################"
-echo "#     Unpack Super.img .... #"
-echo "#############################"
-echo ""
-echo "Convert sparse images to raw images ...."
-echo ""
-./bin/simg2img super.img raw.img
-echo "Unpack super parttion ...."
-echo ""
-./bin/lpunpack raw.img
-}
 zipfile()
 {
 echo "#############################"
@@ -45,11 +32,10 @@ echo "#############################"
 		echo "extract "${part[$i]}.img" : done"
 	done
 	getszie
-	if [[ -f "$bro/dynamic_partitions_op_list" ]]; then
-		for ((i = 0 ; i < 2 ; i++)); do
-		sed -i "s/${part_size[$i]}/"${part[$i]}_size"/g" "$bro/dynamic_partitions_op_list"
-		done
-	fi
+	for ((i = 0 ; i < 2 ; i++)); do
+	sed -i "s/${part_size[$i]}/"${part[$i]}_size"/g" "$bro/dynamic_partitions_op_list"
+	done
+rm $input
 }
 ######################
 mkrw()
@@ -145,11 +131,9 @@ for ((i = 0 ; i < 2 ; i++)); do
 	echo "Shrink "${part[$i]}" :  done"
 done
 getszie
-if [[ -f "$bro/dynamic_partitions_op_list" ]]; then
 	for ((i = 0 ; i < 2 ; i++)); do
 	sed -i "s/"${part[$i]}_size"/"${part_size[$i]}"/g" "$bro/dynamic_partitions_op_list"
 	done
-fi
 }
 cleanup()
 {
@@ -218,12 +202,17 @@ echo "#############################"
 echo ""
 echo "Compress to sparse img .... "
 for ((i = 0 ; i < 2 ; i++)); do
-	./bin/img2simg "${part[$i]}.img" "s_${part[$i]}.img" 2>/dev/null
+	 img2simg "${part[$i]}.img" "s_${part[$i]}.img" 
+	 rm -rf "${part[$i]}.img"
+	 if [ -f "s_${part[$i]}.img"]; then 
+	 	echo " Done : "s_${part[$i]}.img" "
+	 fi
 done
 echo "Compress to new.dat .... "
 for ((i = 0 ; i < 2 ; i++)); do
 	echo "- Repack ${part[$i]}.img"
  	python3 ./bin/linux/img2sdat.py "s_${part[$i]}.img" -o $bro -v 4 -p "${part[$i]}"
+	rm -rf "s_${part[$i]}.img"
 done
 
 #level brotli
@@ -232,8 +221,6 @@ echo "Compress to brotli .... "
 for ((i = 0 ; i < 2 ; i++)); do
    	echo "- Repack ${part[$i]}.new.dat"
 	$bin/brotli -6 -j -w 24 "$bro/${part[$i]}.new.dat" -o "$bro/${part[$i]}.new.dat.br"
-	rm -rf "${part[$i]}.img"
-	rm -rf "s_${part[$i]}.img"
 	rm -rf "$bro/${part[$i]}.new.dat"
 done
 
@@ -264,12 +251,13 @@ elif [[ -f "super.img" ]]; then
 	echo "Super.img detect"
 else exit 0
 fi
+remove_source
 mkrw
 mount
+read -p "Press any key to umount and repack ..."
 ###############
 debloat
 vietsub
 umount
 shrink
-remove_source
 repackz
