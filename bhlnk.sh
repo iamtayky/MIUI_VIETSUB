@@ -43,7 +43,7 @@ echo "#############################"
 	unzip $input -d zip_temp
 	for ((i = 0 ; i < 2 ; i++)); do
 		./bin/brotli --decompress zip_temp/"${part[$i]}.new.dat.br" -o zip_temp/"${part[$i]}.new.dat"
-		./bin/sdat2img.py zip_temp/"${part[$i]}.transfer.list" zip_temp/"${part[$i]}.new.dat" "${part[$i]}.img"
+		python3 ./bin/sdat2img.py zip_temp/"${part[$i]}.transfer.list" zip_temp/"${part[$i]}.new.dat" "${part[$i]}.img"
 		echo "extract "${part[$i]}.img" : done"
 	done
 	getszie
@@ -130,9 +130,6 @@ for ((i = 0 ; i < 2 ; i++)); do
 	echo "Umount "${part[$i]}" :  done"
 	sleep 3
 done
-cd $dir
-	sudo umount $dir/modulevietsub_f
-	sudo umount $dir/modulefonts_f
 }
 ##########
 shrink () 
@@ -203,6 +200,9 @@ echo ""
 	echo "Adding Crack Theme from https://yukongya.herokuapp.com"
 	sudo cp -arf theme_f/system/app/MIUIThemeManager/. $dir/temp/system/system/app/MIUIThemeManager
 	echo "done"
+	sudo umount vietsub_f
+	sudo umount fonts_f
+	sudo umount theme_f
 	cd $dir
 
 
@@ -268,7 +268,6 @@ read -p "Press any key to umount and repack ..."
 ###############
 debloat
 vietsub
-read -p "Press any key to umount and repack ..."
 umount
 shrink
 remove_source
